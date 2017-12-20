@@ -24,8 +24,8 @@ Refer to [ssh-auto-login](https://github.com/liaohuqiu/ssh-auto-login) and [sshg
     Online-2
         5.5.5.5:22222 user5 password5 #use the special port
         6.6.6.6 user6 password6
-    ```  
-4. Run script `./sshgo`, or you can alias `sshgo` command, add the line to the end of ~/.bash_profile and source it:
+    ```
+3. Run script `./sshgo`, or you can alias `sshgo` command, add the line to the end of ~/.bash_profile and source it:
  * alias sshgo='/path/to/ssh-auto-login-manage/sshgo'
 5. enjoy the `sshgo`.
 
@@ -36,7 +36,11 @@ Refer to [ssh-auto-login](https://github.com/liaohuqiu/ssh-auto-login) and [sshg
 ### 说明
 
 * ssh免密码自动登录和主机管理，可以替代SecureCRT的自动登录。
-
 * Mac下的term功能较弱，无法提供像SecureCRT那样方便的主机管理和自动登录功能。在网上找到用expect做自动登录的项目ssh-auto-login，和一个用python写的主机管理界面，于是把两个工程合并在一起，就是现在这个工程了。
-
 * 参考了 [ssh-auto-login](https://github.com/liaohuqiu/ssh-auto-login) and [sshgo](https://github.com/emptyhua/sshgo)
+
+-----
+### update
+
+* 支持通过多级目录的方式管理server（之前版本在多级目录下，会默认为需要使用jumper server）。
+* jumper server功能得到保留。在编辑hosts文件时，server前加上`*`号，可继续之前版本的jumper server功能。

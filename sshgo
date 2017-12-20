@@ -118,6 +118,10 @@ class SSHGO:
             if line_con[0] == '-':
                 line_con = line_con[1:]
                 expand = False
+            need_jumper = False
+            if line_con[0] == '*':
+                line_con = line_con[1:]
+                need_jumper = True
             indent = re.findall(r'^[\t ]*(?=[^\t ])', line)[0]
             line_level = indent.count('    ') + indent.count('\t')
             if tree_level == None:
@@ -133,7 +137,7 @@ class SSHGO:
             node_pass = node_infos[2] if len(node_infos) >= 3 else ''
             node_id_file = node_infos[3] if len(node_infos) == 4 else ''
 
-            new_node = {'nest_parent':None,'level':tree_level,'expanded':expand,'line_number':line_number,'line':node_host,'user':node_user,'password':node_pass,'id_file':node_id_file,'sub_lines':[]}
+            new_node = {'nest_parent':None,'level':tree_level,'expanded':expand,'line_number':line_number,'line':node_host,'user':node_user,'password':node_pass,'id_file':node_id_file,'need_jumper':need_jumper,'sub_lines':[]}
             nodes_pool.append(new_node)
             parent = find_parent_line(new_node)
 
@@ -346,8 +350,9 @@ class SSHGO:
 
             # run script instead of 'ssh'
             nest_parent = node['nest_parent']
+            need_jumper = node['need_jumper']
             ssh = script
-            if nest_parent:
+            if nest_parent and need_jumper:
                 ssh = script_nest
 
             host_info = re.split(':', node['line'].strip())
@@ -362,7 +367,7 @@ class SSHGO:
                 host = host_info[0]
 
 
-            if nest_parent:
+            if nest_parent and need_jumper:
                 nest_host_info = re.split(':', nest_parent['line'].strip())
 
                 nest_port = '22'
@@ -377,7 +382,7 @@ class SSHGO:
                 exe_args = [ssh, nest_host, nest_port, nest_parent['user'], nest_parent['password'], host, port, node['user'], node['password']]
             else:
                 exe_args = [ssh, host, port, node['user'], node['password'], node['id_file']]
-            
+
             os.execvp(ssh, exe_args)
 
     def render_screen(self):
@@ -425,7 +430,10 @@ class SSHGO:
                 else:
                     prefix += '+'
             else:
-                prefix += 'o'
+                if node['need_jumper']:
+                    prefix += '*'
+                else:
+                    prefix += 'o'
             prefix += ' '
 
             # highlight current line
